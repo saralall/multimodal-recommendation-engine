@@ -1,0 +1,23 @@
+# Virtual environment
+venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Local SQLite database
+db.sqlite3
+
+# Collected datasets & images
+data_collection/collected_data/
+
+# Reports, slides, and personal notes
+IFDU3_LallSara.pdf
+Project.pdf
+Project.pptx
+Notes.docx
+Notes.pdf
+Notes.txt
+
+# Environment variables / secrets
+.env

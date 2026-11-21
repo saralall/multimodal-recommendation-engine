@@ -1,0 +1,15 @@
+<div class="col">
+    <div class="card h-100 shadow-sm place-card">
+        <img src="{{ place.get_display_image_url }}" class="card-img-top" alt="{{ place.name }}">
+        <div class="card-body d-flex flex-column">
+            <h6 class="card-title">
+                <a href="{% url 'p160b013:place_detail' place.id %}" class="card-title-link">
+                   {{ place.name }}
+                </a>
+            </h6>
+            <p class="card-text text-muted small mb-2">{{ place.city.name }} | Score: <span class="badge bg-primary rounded-pill">{{ place.page_rank_score|floatformat:4 }}</span></p>
+            <p class="card-text small">{{ place.description|truncatewords:15 }}</p>
+            <a href="{% url 'p160b013:place_detail' place.id %}" class="btn btn-outline-secondary btn-sm mt-auto align-self-start">View Details</a>
+        </div>
+    </div>
+</div>

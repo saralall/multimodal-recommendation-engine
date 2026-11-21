@@ -1,0 +1,80 @@
+{% extends 'p160b013/base.html' %}
+
+{% block title %}{{ place.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-7 mb-4">
+        <h2>{{ place.name }}</h2>
+        <h5 class="text-muted"><a href="{% url 'p160b013:city_view' place.city.id %}" class="text-decoration-none">{{ place.city.name }}</a></h5>
+
+        <img src="{{ place.get_display_image_url }}" class="img-fluid rounded mb-3 shadow-sm" alt="{{ place.name }}">
+
+        <p><strong>PageRank Score:</strong> <span class="badge bg-info text-dark">{{ place.page_rank_score|floatformat:6 }}</span></p>
+        <p><strong>Description:</strong><br> {{ place.description|default:"No description available."|linebreaksbr }}</p>
+        <p><strong>Categories:</strong>
+            {% for cat in place.categories.all %}
+                <span class="badge bg-secondary me-1">{{ cat.name }}</span>
+            {% empty %}
+                <span class="badge bg-light text-dark">N/A</span>
+            {% endfor %}
+        </p>
+
+        {% if place.dominant_colors.all %}
+        <p><strong>Dominant Colors:</strong>
+            <div>
+                {% for color in place.dominant_colors.all %}
+                    <span class="color-block" style="background-color: rgb({{ color.red }}, {{ color.green }}, {{ color.blue }});" title="{{ color.hex_code }}"></span>
+                {% endfor %}
+            </div>
+        </p>
+        {% endif %}
+
+        {% if place.wikidata_id and not place.wikidata_id|slice:":6" == 'local_' %}
+            <p><a href="https://www.wikidata.org/wiki/{{ place.wikidata_id }}" target="_blank" class="btn btn-outline-info btn-sm mt-2">View on Wikidata</a></p>
+        {% endif %}
+    </div>
+
+    <div class="col-md-5">
+        <div class="recommendation-section mb-3">
+            <h4>Similar (Same City, Structure)</h4>
+            {% if sim_struct_same %}
+                <div class="list-group list-group-flush">
+                {% for sim in sim_struct_same %}
+                   <a href="{% url 'p160b013:place_detail' sim.similar_place.id %}" class="list-group-item list-group-item-action bg-transparent">
+                       {{ sim.similar_place.name }} ({{ sim.similarity_score|floatformat:3 }})
+                   </a>
+                {% endfor %}
+                </div>
+            {% else %} <p class="text-muted small px-3">No structural recommendations found.</p> {% endif %}
+        </div>
+
+        <div class="recommendation-section mb-3">
+            <h4>Similar (Same City, Image)</h4>
+            {% if sim_img_same %}
+                 <div class="list-group list-group-flush">
+                {% for sim in sim_img_same %}
+                   <a href="{% url 'p160b013:place_detail' sim.similar_place.id %}" class="list-group-item list-group-item-action bg-transparent">
+                       {{ sim.similar_place.name }} ({{ sim.similarity_score|floatformat:3 }})
+                   </a>
+                {% endfor %}
+                 </div>
+            {% else %} <p class="text-muted small px-3">No Image (Same City) recommendations found.</p> {% endif %}
+        </div>
+
+        <div class="recommendation-section">
+             <h4>Similar (Other City, Image)</h4>
+             {% if sim_img_other %}
+                <div class="list-group list-group-flush">
+                {% for sim in sim_img_other %}
+                   <a href="{% url 'p160b013:place_detail' sim.similar_place.id %}" class="list-group-item list-group-item-action bg-transparent">
+                       {{ sim.similar_place.name }} - <small>{{sim.similar_place.city.name}}</small> ({{ sim.similarity_score|floatformat:3 }})
+                   </a>
+                {% endfor %}
+                </div>
+             {% else %} <p class="text-muted small px-3">No Image (Other Cities) recommendations found.</p> {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
